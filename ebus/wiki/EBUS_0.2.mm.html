@@ -1,0 +1,429 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>EBUS WIKI &nbsp;&nbsp;&nbsp;Version 0.2</title>
+<style type="text/css">
+    li { list-style: none;  margin: 0; }
+    p { margin: 0; }
+    span.foldopened { color: white; font-size: xx-small;
+    border-width: 1; font-family: monospace; padding: 0em 0.25em 0em 0.25em; background: #e0e0e0;
+    VISIBILITY: visible;
+    cursor:pointer; }
+
+
+    span.foldclosed { color: #666666; font-size: xx-small;
+    border-width: 1; font-family: monospace; padding: 0em 0.25em 0em 0.25em; background: #e0e0e0;
+    VISIBILITY: hidden;
+    cursor:pointer; }
+
+    span.foldspecial { color: #666666; font-size: xx-small; border-style: none solid solid none;
+    border-color: #CCCCCC; border-width: 1; font-family: sans-serif; padding: 0em 0.1em 0em 0.1em; background: #e0e0e0;
+    cursor:pointer; }
+
+    span.l { color: red; font-weight: bold; }
+
+    a.mapnode:link {text-decoration: none; color: black; }
+    a.mapnode:visited {text-decoration: none; color: black; }
+    a.mapnode:active {text-decoration: none; color: black; }
+    a.mapnode:hover {text-decoration: none; color: black; background: #eeeee0; }
+
+</style>
+<!-- ^ Position is not set to relative / absolute here because of Mozilla -->
+</head>
+<body>
+
+<script type="text/javascript">
+   // Here we implement folding. It works fine with MSIE5.5, MSIE6.0 and
+   // Mozilla 0.9.6.
+
+   if (document.layers) {
+      //Netscape 4 specific code
+      pre = 'document.';
+      post = ''; }
+   if (document.getElementById) {
+      //Netscape 6 specific code
+      pre = 'document.getElementById("';
+      post = '").style'; }
+   if (document.all) {
+      //IE4+ specific code
+      pre = 'document.all.';
+      post = '.style'; }
+
+function layer_exists(layer) {
+   try {
+      eval(pre + layer + post);
+      return true; }
+   catch (error) {
+      return false; }}
+
+function show_layer(layer) {
+   eval(pre + layer + post).position = 'relative'; 
+   eval(pre + layer + post).visibility = 'visible'; }
+
+function hide_layer(layer) {
+   eval(pre + layer + post).visibility = 'hidden';
+   eval(pre + layer + post).position = 'absolute'; }
+
+function hide_folder(folder) {
+    hide_folding_layer(folder)
+    show_layer('show'+folder);
+
+    scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+}
+
+function show_folder(folder) {
+    // Precondition: all subfolders are folded
+
+    show_layer('hide'+folder);
+    hide_layer('show'+folder);
+    show_layer('fold'+folder);
+
+    scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+
+    var i;
+    for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       show_layer('show'+folder+'_'+i); }
+}
+function show_folder_completely(folder) {
+    // Precondition: all subfolders are folded
+
+    show_layer('hide'+folder);
+    hide_layer('show'+folder);
+    show_layer('fold'+folder);
+
+    scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+
+    var i;
+    for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       show_folder_completely(folder+'_'+i); }
+}
+
+
+
+function hide_folding_layer(folder) {
+   var i;
+   for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       hide_folding_layer(folder+'_'+i); }
+
+   hide_layer('hide'+folder);
+   hide_layer('show'+folder);
+   hide_layer('fold'+folder);
+
+   scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+}
+
+function fold_document() {
+   var i;
+   var folder = '1';
+   for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       hide_folder(folder+'_'+i); }
+}
+
+function unfold_document() {
+   var i;
+   var folder = '1';
+   for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       show_folder_completely(folder+'_'+i); }
+}
+
+</script>
+<SPAN class="foldspecial" onclick="fold_document()">All +</SPAN>
+<SPAN class="foldspecial" onclick="unfold_document()">All -</SPAN>
+&#xa;    <p>&#xa;      EBUS WIKI&#xa;    </p>&#xa;    <p>&#xa;      Version 0.2&#xa;    </p>&#xa;  
+<ul><li>Einleitung
+<ul><li>Kurze Beschreibung (Bisherige Text)
+
+</li>
+<li>Inhaltsverzeichnis
+
+</li>
+
+</ul>
+</li>
+<li>1 Interface
+<ul><li>1.1 Schaltung
+
+</li>
+<li>1.1 Eigenbau (Lochrasterplatine)
+
+</li>
+<li>1.2 Platine
+<ul><li>Inhalt:http://forum.fhem.de/index.php/topic,46098.msg378796.html#msg378796
+<ul><li>EBUSD Adapter zentis666
+
+</li>
+
+</ul>
+</li>
+<li>Zusammenbau
+<ul><li>Tipps
+<ul><li>Wiederst&auml;nde messen
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>Platine best&uuml;cken
+
+</li>
+<li>Platine Messpunkte
+
+</li>
+<li>Poti abgleichen
+<ul><li><span id="show1_1" class="foldclosed" onClick="show_folder('1_1')" style="POSITION: absolute">+</span> <span id="hide1_1" class="foldopened" onClick="hide_folder('1_1')">-</span>
+Per eBusd (einfach)
+<ul id="fold1_1" style="POSITION: relative; VISIBILITY: visible;"><li>http://forum.fhem.de/index.php/topic,46098.msg379253.html#msg379253
+
+</li>
+
+</ul>
+</li>
+<li>Per Messung
+<ul><li>Nach Reinharts Beschreibung
+<ul><li>Multimeter
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li><span id="show1_2" class="foldclosed" onClick="show_folder('1_2')" style="POSITION: absolute">+</span> <span id="hide1_2" class="foldopened" onClick="hide_folder('1_2')">-</span>
+Bekannte Fehler:
+<ul id="fold1_2" style="POSITION: relative; VISIBILITY: visible;"><li>Inhalt:http://forum.fhem.de/index.php/topic,46098.msg378796.html#msg378796
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>1.3 Kommerzielles Interface
+
+</li>
+
+</ul>
+</li>
+<li>2 Software
+<ul><li>Einleitung
+<ul><li><p>Als Software kommt auf dem Raspberry Pi der ebusd = EBUS-D&auml;mon zum Einsatz (aktuell im Januar 2016 die Version 2.0). usw.
+</li>
+</ul>
+</li>
+<li>2.1 Ebusd Installation (Packages)
+<ul><li>2.1.1 Voraussetzungen
+
+</li>
+<li>2.1.2 eBusd
+<ul><li>https://github.com/john30/ebusd/releases
+
+</li>
+
+</ul>
+</li>
+<li>2.1.2 Konfigurationsdateien (CSV-Files)
+<ul><li>https://github.com/john30/ebusd-configuration/releases
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>2.2 Ebusd Installation (Build Prozess)
+<ul><li><span id="show1_3" class="foldclosed" onClick="show_folder('1_3')" style="POSITION: absolute">+</span> <span id="hide1_3" class="foldopened" onClick="hide_folder('1_3')">-</span>
+2.2.1 Voraussetzungen
+<ul id="fold1_3" style="POSITION: relative; VISIBILITY: visible;"><li>apt-get install git autoconf automake g++ make
+
+</li>
+
+</ul>
+</li>
+<li>2.2.2 eBusd
+
+</li>
+<li><span id="show1_4" class="foldclosed" onClick="show_folder('1_4')" style="POSITION: absolute">+</span> <span id="hide1_4" class="foldopened" onClick="hide_folder('1_4')">-</span>
+2.2.3 Konfigurationsdateien (CSV-Files)
+<ul id="fold1_4" style="POSITION: relative; VISIBILITY: visible;"><li>http://forum.fhem.de/index.php/topic,46098.msg379544.html#msg379544
+
+</li>
+
+</ul>
+</li>
+<li>2.2.4 Dienstkonfiguraiton
+
+</li>
+<li><span id="show1_5" class="foldclosed" onClick="show_folder('1_5')" style="POSITION: absolute">+</span> <span id="hide1_5" class="foldopened" onClick="hide_folder('1_5')">-</span>
+2.2.5 Logdatei (Logrotate)
+<ul id="fold1_5" style="POSITION: relative; VISIBILITY: visible;"><li>/var/log/ebusd.log { 	rotate 7 	copytruncate 	compress 	missingok 	notifempty 	daily }
+
+</li>
+<li>Beschreibung:
+<ul><li><p>alle 7 Tage wird &uuml;berschrieben, die Files werden dann komprimiert (au&szlig;er dem aktuellen File) und das Ganze wird t&auml;glich ausgef&uuml;hrt. 
+</li>
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>2.3 Einbindung in FHEM mittels ECMD
+<ul><li>2.3.1 Definition in FHEM
+<ul><li>http://forum.fhem.de/index.php/topic,46098.msg381563.html#msg381563
+
+</li>
+
+</ul>
+</li>
+<li>2.3.2 Definition der ECMD Devices
+
+</li>
+<li>2.3.3 Definition Heizkreis
+
+</li>
+<li>2.2.4 Definition Warmwasserkreis
+
+</li>
+<li>2.2.5 Definition Solarkreis
+
+</li>
+
+</ul>
+</li>
+<li>2.4 Einbindung in FHEM mittels GAEBUS
+<ul><li>http://forum.fhem.de/index.php/topic,46098.msg381580.html#msg381580
+
+</li>
+<li>2.4.1 Definition in FHEM
+
+</li>
+<li>2.4.2 Einrichtung
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>3 System&uuml;berwachung
+<ul><li>3.1 Mithilfe von FHEM
+<ul><li>Bisherige Wiki Beitrag +
+
+</li>
+<li>siehe auch hier: http://forum.fhem.de/index.php/topic,46098.msg381563.html#msg381563
+
+</li>
+
+</ul>
+</li>
+<li>3.2 Mithilfe von Watchdog
+<ul><li>Bisherige Wiki Beitrag +
+
+</li>
+<li>siehe auch hier: http://forum.fhem.de/index.php/topic,46098.msg381563.html#msg381563
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>4 Beispiele
+<ul><li>4.1 Heizkurve
+<ul><li>http://forum.fhem.de/index.php/topic,46098.msg381563.html#msg381563
+
+</li>
+
+</ul>
+</li>
+<li>4.2 Wochenprogramme
+<ul><li>http://forum.fhem.de/index.php/topic,46098.msg383269.html#msg383269
+
+</li>
+
+</ul>
+</li>
+<li>4.3 Visualisierung und Steuerung mittels FTUI
+
+</li>
+
+</ul>
+</li>
+<li>5 Tipps &amp; Tricks [optional]
+<ul><li>TBD
+
+</li>
+<li>USB Device unter Linux ermitteln 
+
+</li>
+<li>EBUSD Checkconfig
+<ul><li>ebusd --checkconfig --scanconfig
+
+</li>
+
+</ul>
+</li>
+<li>Bedeutung von "unknow MS" in eBusd Logdatei
+
+</li>
+<li>Bedeutung von "lost signal"
+
+</li>
+<li>ERR: duplicate entry
+<ul><li>http://forum.fhem.de/index.php/topic,46098.msg383041.html#msg383041
+
+</li>
+
+</ul>
+</li>
+<li>2.1.1 Vorgehensweise bei einem neuen Heizungssystem
+
+</li>
+<li>ERR: end of input reached Erroneous item is here:
+<ul><li>http://forum.fhem.de/index.php/topic,46098.msg383450.html#msg383450
+
+</li>
+<li>http://forum.fhem.de/index.php/topic,46098.msg383510.html#msg383510
+
+</li>
+
+</ul>
+</li>
+<li>[bus error] send to 15: ERR: read timeout, retry
+
+</li>
+
+</ul>
+</li>
+<li>6 Weiterf&uuml;hrende Links
+<ul><li>eBus Schaltung in Betrieb nehmen!
+
+</li>
+<li>L&auml;uft: Heizung mit eBus-Schnittstelle
+
+</li>
+<li>Forum GAEBUS Modul
+
+</li>
+
+</ul>
+</li>
+
+</ul><SCRIPT type="text/javascript">
+fold_document();
+</SCRIPT>
+</body>
+</html>
