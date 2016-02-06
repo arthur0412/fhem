@@ -1,0 +1,8 @@
+/var/log/ebusd.log {
+	rotate 7
+	copytruncate
+	compress
+	missingok
+	notifempty
+	daily
+}
