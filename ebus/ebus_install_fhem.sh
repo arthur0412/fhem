@@ -23,6 +23,7 @@ Duplicate=false       # False=change in orignal fhem.cfg, true=make a copy fhem-
 IPRaspi="10.0.0.6"    # IP Adresses of the eBus Raspberry
 Modify_cfg=true       # Config Files where modified for a correct Function
 cleaning=true         # delete Install Files in $ebusinstallerdir
+repoamunra=false	  # Change repo to amunra0412
 #######################
 
 # Log="/opt/fhem/log/fhem-install.log"
@@ -46,21 +47,30 @@ interval="900"
 fhemplcmd='/opt/fhem/fhem.pl 7072'
 
 # Download Files
-hkurvecfg="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/hkurve.cfg/download -O "
-bai01="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/bai01.cfg/download -O "
+url="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/"
+urlpostfix="/download -O "
+
+# Change to amunra0412 github repo
+if [ $repoamunra = "true" ]; then
+	url="https://raw.githubusercontent.com/arthur0412/fhem/master/ebus/installerfiles/"
+	urlpostfix=" -O "
+fi
+
+hkurvecfg=$url"hkurve.cfg"$urlpostfix
+bai01=$url"bai01.cfg"$urlpostfix
 gaebus="http://sourceforge.net/p/fhem/code/HEAD/tree/trunk/fhem/contrib/98_GAEBUS.pm?format=raw -O "
-ebuscfg="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/EBUS.cfg/download -O "
-valvescfg="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/valves.cfg/download -O "
-valvesmodule="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/39_VALVES.pm/download -O "
-timercfg="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/timer.cfg/download -O "
-bai02="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/bai02.cfg/download -O "
-myUtils="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/99_myUtils.pm/download -O "
-MyUtilsHeader="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/99_myUtils_Header.pm/download -O "
-broadcastcsv="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/broadcast.csv/download -O "
-templatescsv="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/_templates.csv/download -O "
-ebusdlogrotate="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/ebusd.logrotate/download -O "
-ebusddefault="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/ebusd.default/download -O "
-customtabletuitar="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/ftui.tar.gz/download -O "
+ebuscfg=$url"EBUS.cfg"$urlpostfix
+valvescfg=$url"valves.cfg"$urlpostfix
+valvesmodule=$url"39_VALVES.pm"$urlpostfix
+timercfg=$url"timer.cfg"$urlpostfix
+bai02=$url"bai02.cfg"$urlpostfix
+myUtils=$url"99_myUtils.pm"$urlpostfix
+MyUtilsHeader=$url"99_myUtils_Header.pm"$urlpostfix
+broadcastcsv=$url"broadcast.csv"$urlpostfix
+templatescsv=$url"_templates.csv"$urlpostfix
+ebusdlogrotate=$url"ebusd.logrotate"$urlpostfix
+ebusddefault=$url"ebusd.default"$urlpostfix
+customtabletuitar=$url"ftui.tar.gz"$urlpostfix
 
 INTERACTIVE=true
 ASK_TO_REBOOT=0
