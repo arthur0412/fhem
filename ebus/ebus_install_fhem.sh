@@ -6,12 +6,11 @@
 #
 # Author's: amunra, reinhart
 
-Version="V0.8.1"
+Version="V0.8.2"
 
 #######################
 #   please change me  #
 Duplicate=false       # False=change in orignal fhem.cfg, true=make a copy fhem-install.cfg
-IPRaspi="10.0.0.6"    # IP Adresses of the eBus Raspberry
 Modify_cfg=true       # Config Files where modified for a correct Function
 cleaning=true         # delete Install Files in $ebusinstallerdir
 repoamunra=false	  # Change repo to amunra0412
@@ -78,11 +77,6 @@ if [ "$Duplicate" = "true" ]; then
  else
    Filename=fhem.cfg
 fi
-
-# only for backupdir
-Filedate=`date "+%d%m%H%M"`
-echo Filedatum=$Filedate, $Filename, $IPRaspi, $Log 
-echo Filedatum=$Filedate, $Filename, $IPRaspi, $Log >>$Log
 
 prepinstaller() {
 	if [ ! -f $ebusinstallerdir ]; then
@@ -219,9 +213,9 @@ blockingexisitingfhementries(){
 	do
 		echo '[ .. ] blocking existing '$Name' defines'
 		echo $(date +"%m-%d-%Y %T")	'[ .. ] blocking existing '$Name' defines' >> $Log
-		sed -e 's/define '"$Name"'/# define '"$Name"'/g' -i /opt/fhem/fhem-installer.cfg 
-		sed -e 's/attr '"$Name"'/# attr '"$Name"'/g' -i /opt/fhem/fhem-installer.cfg 
-		sed -e 's/set '"$Name"'/# set '"$Name"'/g' -i /opt/fhem/fhem-installer.cfg
+		sed -e 's/define '"$Name"'/#-# define '"$Name"'/g' -i /opt/fhem/fhem-installer.cfg 
+		sed -e 's/attr '"$Name"'/#-# attr '"$Name"'/g' -i /opt/fhem/fhem-installer.cfg 
+		sed -e 's/set '"$Name"'/#-# set '"$Name"'/g' -i /opt/fhem/fhem-installer.cfg
 		echo '[ ok ] blocking existing '$Name' defines done'
 		echo $(date +"%m-%d-%Y %T")	'[ ok ] blocking existing '$Name' defines done' >> $Log
 	done
@@ -472,18 +466,18 @@ do_install_valves(){
 	
 	# Backup fhem.cfg
 	backupfhemcfg
-
+    
+	blockingexisitingfhementries "ValWichtung FileLog_ValWichtung weblink_ValWichtung ValSchwelle ValAutoHeizkurve ValWinter Heizkurve_Check"
+	
 	# Download valves config
 	downloadfile "$valvescfg" $ebusinstallerdir/valves.cfg
-     
+
 	# check if existing
 	if [ -e $ebusinstallerdir"/valves.cfg" ]; then 
 		sudo cat $ebusinstallerdir/valves.cfg >> /opt/fhem/fhem-installer.cfg
 		echo valves.cfg is modified
 		echo valves.cfg is modified >>$Log
 	fi 
-	
-	blockingexisitingfhementries "ValWichtung FileLog_ValWichtung weblink_ValWichtung ValSchwelle ValAutoHeizkurve ValWinter Heizkurve_Check"
 
 	if [ "$Duplicate" = "false" ]; then
 		cp /opt/fhem/fhem-installer.cfg /opt/fhem/$Filename
@@ -544,7 +538,7 @@ if [ $exitstatus = 0 ]; then
 		do
 			echo search and replace.. $Name
 			echo search and replace.. $Name >>$Log
-			sed -e 's/get '"$Name"'/# get '"$Name"'/g' -i /opt/fhem/FHEM/bai01.cfg 
+			sed -e 's/get '"$Name"'/#-# get '"$Name"'/g' -i /opt/fhem/FHEM/bai01.cfg 
 		done
 	fi
 
@@ -688,7 +682,7 @@ do_install_ftui(){
 	sudo tar -xzf $ebusinstallerdir/ftui.tar.gz -C /
 
 	# check existing entry and blocking
-	sed -e 's/define tablet_ui/# define tablet_ui/g' -i /opt/fhem/fhem-installer.cfg
+	sed -e 's/define tablet_ui/#-# define tablet_ui/g' -i /opt/fhem/fhem-installer.cfg
 	
 	# define Tablet UI
 	echo '[ .. ] define Tablet UI'
@@ -774,6 +768,9 @@ do_install_fhem(){
    sudo ./fhem start
 } 
 
+do_config_installer(){ 
+whiptail --title "not implemented yet" --msgbox "....comming soon....\n" 8 78
+}
 #_________________________________________________________       
 # Interactive use loop
 calc_wt_size
@@ -787,6 +784,7 @@ FUN=$(whiptail --title "eBus Install and Configuration Tool $(hostname) $Version
 "6  ECMD Zeitprogramme" "FHEM Config, bai01.cfg" \
 "7  GAEBUS" "98_GAEBUS.pm, FHEM Config" \
 "8  Tablet-UI" "Install UI HTML Demo Modul" \
+"x  Installer configuration" "Setup installer configuration" \
 3>&1 1>&2 2>&3)
 
 RET=$?
@@ -803,6 +801,7 @@ elif [ $RET -eq 0 ]; then
 		7\ *) do_install_gaebus ;; #ok
 		8\ *) do_install_ftui ;;
 		11\ *) do_install_fhem ;; #later version 2.0
+		x\ *) do_config_installer ;; #later version 2.0
 		*) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
 	esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
 	else
