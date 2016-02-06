@@ -5,17 +5,8 @@
 # sudo ./ebus_install_fhem.sh
 #
 # Author's: amunra, reinhart
-#
-# modified: 29.01.2016 reinhart - initial implementation
-# modified: 30.01.2016 amunra - several main changes  
-# modified: 31.02.2016 amunra - several main changes
-# modified: 02.02.2016 amunra - finalize GAEBUS function
-# modified: 03.02.2016 amunra - consolidate function hcurve 430/470 to one function
-# modified: 04.02.2016 amunra - finalize and testing
-# modified: 05.02.2016 amunra - finalize and testing
-# modified: 06.02.2016 amunra - finalize Rev. 0.8 -> change status Beta to tasted.
 
-Version="V0.8"
+Version="V0.8.1"
 
 #######################
 #   please change me  #
