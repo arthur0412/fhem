@@ -28,7 +28,7 @@ cleaning=true         # delete Install Files in $ebusinstallerdir
 # Log="/opt/fhem/log/fhem-install.log"
 Log="/var/log/ebusinstaller.log"
 BackupDir="/opt/fhem/backup/"$(date +"%Y%m%d")
-ebusinstallerdir=$HOME"/ebusinstaller2"
+ebusinstallerdir=$HOME"/ebusinstaller"
 # eBusd Variablen
 ebusdversion="ebusd-2.0_armhf.deb"
 ebusdurl="https://github.com/john30/ebusd/releases/download/v2.0/$ebusdversion -O "
