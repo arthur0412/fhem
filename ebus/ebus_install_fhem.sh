@@ -61,6 +61,7 @@ templatescsv=$url"_templates.csv"$urlpostfix
 ebusdlogrotate=$url"ebusd.logrotate"$urlpostfix
 ebusddefault=$url"ebusd.default"$urlpostfix
 customtabletuitar=$url"ftui.tar.gz"$urlpostfix
+fhemsources="http://fhem.de/fhem-5.7.tar.gz -P "
 
 INTERACTIVE=true
 ASK_TO_REBOOT=0
@@ -614,7 +615,7 @@ do_install_gaebus(){
 
 		checkfhemcon # Check connetion to FHEM Server
 
-		if [ "$fhemcon" = "global" ]; then # connection to FHEM Server ist ok.
+		if [ "$fhemcon" = "global" ]; then # connection to FHEM Server is ok.
 			output=`sudo perl $fhemplcmd 'list TYPE=GAEBUS NAME'`
 			echo "$output" | while read a; do result=`echo $a | awk '{split($0,a," "); print a[1];}';` 
 				if [ "$result" != "" ]; then # result not null
@@ -641,7 +642,7 @@ do_install_gaebus(){
 
 			echo '[ .. ] define new GAEBUS device'
 			echo $(date +"%m-%d-%Y %T")	'[ .. ]  define new GAEBUS device' >> $Log
-			sudo perl $fhemplcmd 'define '$gaebusdev' GAEBUS '$address' '$interval';attr '$gaebusdev' ebusWritesEnabled 1;attr '$gaebusdev' room GAEBUS' >> $Log
+			sudo perl $fhemplcmd 'reload 98_GAEBUS;define '$gaebusdev' GAEBUS '$address' '$interval';attr '$gaebusdev' ebusWritesEnabled 1;attr '$gaebusdev' room GAEBUS' >> $Log
 			echo '[ .. ] save config...'
 			sudo perl $fhemplcmd 'save' >> $Log
 			echo '[ ok ] define new GAEBUS device done'
@@ -703,69 +704,87 @@ do_install_ftui(){
 }  
 #_________________________________________________________ 
 do_install_fhem(){  
-   # save existing fhem.cfg 
-   if [ -e /opt/fhem/fhem.cfg ]; then
-     if [ ! -e $BackupDir ]; then
-       sudo mkdir -p $BackupDir
-       sudo chmod 777 $BackupDir 
-       echo Backupdir created
-       echo Backupdir created >>$Log
-     fi
-     cp /opt/fhem/fhem.cfg $BackupDir/fhem.cfg     
-   fi
+	
+	prepinstaller
 
-   if [ -e /etc/rc.local ]; then
-      sudo rm /etc/rc.local
-   fi
-   
-   cd /opt
-   #sudo apt-get -y update
-   #sudo apt-get -y upgrade     # make a problem with the followed wget
+	# Backup current fhem installation
+	if [ -d /opt/fhem ]; then
+		baktimestamp=$(date +"_%Y%m%d_%H%m%S")
+		echo '[ .. ] backup existing fhem installation'
+		echo $(date +"%m-%d-%Y %T")	'[ .. ] backup existing fhem installation' >> $Log		
+		sudo apt-mark unhold fhem >> $Log
+		# stop fhem if running
+		if test -f /etc/init.d/fhem; then
+			sudo /etc/init.d/fhem stop noaptmark >> $Log
+		fi
+		# remove fhem autostart
+		sudo update-rc.d -f fhem remove >> $Log
+		sudo mv /opt/fhem /opt/fhem$baktimestamp >>$Log
+		sudo mv /etc/init.d/fhem /opt/fhem$baktimestamp/fhem.init.d >>$Log
+		echo '[ ok ] backup existing fhem installation done'
+		echo $(date +"%m-%d-%Y %T")	'[ ok ] backup existing fhem installation done' >> $Log
+	fi
+	
+	# download fhem sources
+	downloadfile "$fhemsources" $ebusinstallerdir/
+	echo '[ .. ] extract FHEM sources'
+	echo $(date +"%m-%d-%Y %T")	'[ .. ] extract FHEM sources' >> $Log	
+	sudo tar -xzf $ebusinstallerdir/fhem-5.7.tar.gz -C $ebusinstallerdir/
+	sudo mv $ebusinstallerdir/fhem-5.7 /opt/fhem
+	echo '[ ok ] extract FHEM sources done'
+	echo $(date +"%m-%d-%Y %T")	'[ ok ] extract FHEM sources done' >> $Log
+	
+	#post installation
+	echo '[ .. ] post FHEM installation'
+	echo $(date +"%m-%d-%Y %T")	'[ .. ] post FHEM installation' >> $Log
+	if grep -q fhem /etc/passwd; then
+		userdel fhem
+	fi
 
-   sudo wget http://fhem.de/fhem-5.7.tar.gz
-   echo Fhem is downloded
-   echo Fhem is downloded >>$Log
-   wait 1
-      
-   sudo tar xvf /opt/fhem-5.7.tar.gz
-   echo Fhem is extracted
-   echo Fhem is extracted >>$Log   
-   wait 1
-   
-   # correct the original dir
-   sudo cp -pa /opt/fhem-5.7/* /opt/fhem/
-   sudo rm -r /opt/fhem-5.7
-   echo dir fhem created
-   echo dir fhem created >>$Log
+	if test -f /etc/init/fhem.conf; then
+		rm /etc/init/fhem.conf
+	fi
 
-   # cleanup tar
-   sudo rm fhem-5.7.tar.g*
+	if test -f /etc/init.d/fhem; then
+		rm /etc/init.d/fhem
+	fi	
+		
+	if ! getent passwd fhem >/dev/null; then
+		sudo useradd --system --home /opt/fhem --gid dialout --shell /bin/false fhem
+	fi
 
-   sudo touch /etc/rc.local       
-   sudo chmod 777 /etc/rc.local
-   sudo echo cd /opt/fhem >> /etc/rc.local
-   sudo echo "perl fhem.pl fhem.cfg &" >> /etc/rc.local
-   sudo echo exit 0 >> /etc/rc.local
-   sudo chmod a+x /etc/rc.local
-   # make log writable
-   sudo chmod 777 /opt/fhem/log
-   sudo chmod 777 /opt/fhem/fhem.cfg
+	sudo chown -R fhem:dialout /opt/fhem
 
-   echo FHEM is installed
-   echo FHEM is installed >>$Log
- 
-   cd /opt
-   sudo chmod -R a+w fhem
-   sudo usermod -a -G tty pi
-   sudo usermod -a -G tty fhem
+	# set up of autostart
+	cp /opt/fhem/contrib/init-scripts/fhem.3 /etc/init.d/fhem
+	chmod ugo+x /etc/init.d/fhem
+	update-rc.d fhem defaults
 
-   sudo wget http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/fhem.cfg/download -O $ebusinstallerdir/fhem.cfg
-   echo download fhem.cfg finished
-    
-   # restart fhem with new config
-   cd /etc/init.d
-   sudo ./fhem stop
-   sudo ./fhem start
+	if test -f /etc/init.d/fhem; then
+		/etc/init.d/fhem start noaptmark
+	fi
+	echo '[ ok ] post FHEM installation done'
+	echo $(date +"%m-%d-%Y %T")	'[ ok ] post FHEM installation done' >> $Log
+
+	# update fhem
+	echo '[ .. ] update fhem sources'
+	echo $(date +"%m-%d-%Y %T")	'[ .. ] update fhem' >> $Log	
+	checkfhemcon # Check connetion to FHEM Server
+		if [ "$fhemcon" = "global" ]; then # connection to FHEM Server ist ok.
+			echo '[ .. ] FHEM update in progress please wait...'
+			echo $(date +"%m-%d-%Y %T")	'[ .. ] FHEM update in progress please wait...' >> $Log
+			sudo perl $fhemplcmd 'update' >> $Log
+			sudo perl $fhemplcmd 'shutdown restart' >> $Log
+			echo '[ ok ] FHEM update done'
+			echo $(date +"%m-%d-%Y %T")	'[ ok ] FHEM update done' >> $Log
+		fi
+	echo '[ ok ] update fhem sources done'
+	echo $(date +"%m-%d-%Y %T")	'[ ok ] update fhem done' >> $Log
+	
+	# cleaning installpath  
+	if [ "$cleaning" = "true" ]; then
+		cleanupinstaller
+	fi   
 } 
 
 do_config_installer(){ 
@@ -776,14 +795,15 @@ whiptail --title "not implemented yet" --msgbox "....comming soon....\n" 8 78
 calc_wt_size
 while true; do
 FUN=$(whiptail --title "eBus Install and Configuration Tool $(hostname) $Version" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select --defaultno \
-"1  eBusd Installation" "Daemon,Start/Stop,Log,Default" \
-"2  eBusd Config Package" "CSV alle,Log,Logrotate,broadcast,templates" \
-"3  ECMD Basis Package" "ECMD Devices,Classdef,Zyklus,bai00.cfg" \
-"4  ECMD Heizkurve" "FHEM Config, bai01.cfg" \
-"5  ECMD Valves Waermebedarfst." "39_Valves.pm, FHEM Config" \
-"6  ECMD Zeitprogramme" "FHEM Config, bai01.cfg" \
-"7  GAEBUS" "98_GAEBUS.pm, FHEM Config" \
-"8  Tablet-UI" "Install UI HTML Demo Modul" \
+"1  FHEM Installation" "Install FHEM Server" \
+"2  eBusd Installation" "Daemon,Start/Stop,Log,Default" \
+"3  eBusd Config Package" "CSV alle,Log,Logrotate,broadcast,templates" \
+"4  ECMD Basis Package" "ECMD Devices,Classdef,Zyklus,bai00.cfg" \
+"5  ECMD Heizkurve" "FHEM Config, bai01.cfg" \
+"6  ECMD Valves Waermebedarfst." "39_Valves.pm, FHEM Config" \
+"7  ECMD Zeitprogramme" "FHEM Config, bai01.cfg" \
+"8  GAEBUS" "98_GAEBUS.pm, FHEM Config" \
+"9  Tablet-UI" "Install UI HTML Demo Modul" \
 "x  Installer configuration" "Setup installer configuration" \
 3>&1 1>&2 2>&3)
 
@@ -792,15 +812,15 @@ if [ $RET -eq 1 ]; then
 	do_finish
 elif [ $RET -eq 0 ]; then
 	case "$FUN" in
-		1\ *) do_install_ebusd ;; #ok
-		2\ *) do_install_ebuscfg ;; #ok
-		3\ *) do_install_ecmdbasis ;;
-		4\ *) do_install_hcurve ;;
-		5\ *) do_install_valves ;;
-		6\ *) do_install_timer ;;
-		7\ *) do_install_gaebus ;; #ok
-		8\ *) do_install_ftui ;;
-		11\ *) do_install_fhem ;; #later version 2.0
+		1\ *) do_install_fhem ;; #later version 2.0
+		2\ *) do_install_ebusd ;; #ok
+		3\ *) do_install_ebuscfg ;; #ok
+		4\ *) do_install_ecmdbasis ;;
+		5\ *) do_install_hcurve ;;
+		6\ *) do_install_valves ;;
+		7\ *) do_install_timer ;;
+		8\ *) do_install_gaebus ;; #ok
+		9\ *) do_install_ftui ;;
 		x\ *) do_config_installer ;; #later version 2.0
 		*) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
 	esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
