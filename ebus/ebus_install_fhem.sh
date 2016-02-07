@@ -6,7 +6,7 @@
 #
 # Author's: amunra, reinhart
 
-Version="V0.8.4"
+Version="V0.8.5"
 
 #######################
 #   please change me  #
@@ -275,6 +275,16 @@ do_parser(){
 do_install_ebusd(){
 
 	eusadapterportdefault="/dev/ttyUSB0"
+
+	#ls /dev/ttyUSB* >/home/pi/usb.txt   
+	#ebusadapterportraspi = . /home/pi/usb.txt 
+
+	#if [ -n $ebusadapterportraspi = "true" ]; then 
+		# eusadapterportdefault = $ebusadapterportraspi 
+	#fi
+
+	#sudo rm /home/pi/usb.txt
+  
 	eusadapterport=$(whiptail --inputbox "Please check and enter the eBus Adapter Port (/dev/ttyUSB0)" 8 78 $eusadapterportdefault --title "ebus Adapter Port" 3>&1 1>&2 2>&3)
 	exitstatus=$?
 	if [ $exitstatus = 0 ]; then
@@ -425,7 +435,7 @@ do_install_hcurve() {
 
 	thermostat=$(whiptail --title "Select your room thermostat" --menu "Choose an option" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT \
 	"430" "calorMATIC VRC 430" \
-	"470" "calorMATIC VRC 470 / 470f" 3>&1 1>&2 2>&3)
+	"470#install" "calorMATIC VRC 470 / 470f" 3>&1 1>&2 2>&3)
 
 	exitstatus=$?
 	if [ $exitstatus = 0 ]; then
@@ -708,6 +718,13 @@ do_install_ftui(){
 	fi   
 	
 }  
+
+#_________________________________________________________ 
+# delete all Lines between the marker #-# and #########
+do_delete_marker(){
+    sudo sed '/#-#/,/############/d' -i fhem.cfg
+}
+ 
 #_________________________________________________________ 
 do_install_fhem(){  
 	
@@ -792,29 +809,31 @@ do_install_fhem(){
 		cleanupinstaller
 	fi   
 } 
-
+do_setfhemtelnetpw() {
+ebusdhost=$(whiptail --inputbox "Please enter Hostname/IP-Address and Port of the ebusd Server?" 8 78 $address --title "ebusd Hostname/IP-Address" 3>&1 1>&2 2>&3)
+}
 do_config_installer(){ 
-	whiptail --title "not implemented yet" --msgbox "....comming soon....\n" 8 78
+	# whiptail --title "not implemented yet" --msgbox "....comming soon....\n" 8 78
 	# thermostat=$(whiptail --title "eBus installer Settings" --menu "Choose an option" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT \
 	# "set FHEM telnet pw" "set FHEM telnet (password/globalpassword)" \
 	# "Duplicate" "False=change in orignal fhem.cfg, true=make a copy fhem-install.cfg" 3>&1 1>&2 2>&3)
-	# FUN2=$(whiptail --title "eBus installer Settings" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select --defaultno \
-	# "1  FHEM telnet pwd" "set FHEM telnet (password/globalpassword)" \
-	# "2  Duplicate" "false=change fhem.cfg, true=change fhem-install.cfg" \
-	# 3>&1 1>&2 2>&3)
+	FUN2=$(whiptail --title "eBus installer Settings" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select --defaultno \
+	"1  FHEM telnet pwd" "set FHEM telnet (password/globalpassword)" \
+	"2  Duplicate" "false=change fhem.cfg, true=change fhem-install.cfg" \
+	3>&1 1>&2 2>&3)
 
-	# RET2=$?
-	# if [ $RET2 -eq 1 ]; then
-		# do_finish
-	# elif [ $RET2 -eq 0 ]; then
-		# case "$FUN2" in
-			# 1\ *) do_setfhempw ;; #later version 2.0
-			# 2\ *) do_install_ebusd ;; #ok
-			# *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-		# esac || whiptail --msgbox "There was an error running option $FUN2" 20 60 1
-		# else
-			# exit 1
-	# fi
+	RET2=$?
+	if [ $RET2 -eq 1 ]; then
+		return 0
+	elif [ $RET2 -eq 0 ]; then
+		case "$FUN2" in
+			1\ *) do_setfhemtelnetpw;; 
+			2\ *) do_install_ebusd ;;
+			*) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+		esac || whiptail --msgbox "There was an error running option $FUN2" 20 60 1
+		else
+			return 0
+	fi
 
 }
 #_________________________________________________________       
@@ -831,6 +850,7 @@ FUN=$(whiptail --title "eBus Install and Configuration Tool $(hostname) $Version
 "7  ECMD Zeitprogramme" "FHEM Config, bai01.cfg" \
 "8  GAEBUS" "98_GAEBUS.pm, FHEM Config" \
 "9  Tablet-UI" "Install UI HTML Demo Modul" \
+"10 Markierungen loeschen" "loeschen von doppelten Installationen" \
 "x  Installer configuration" "Setup installer configuration" \
 3>&1 1>&2 2>&3)
 
@@ -839,16 +859,17 @@ if [ $RET -eq 1 ]; then
 	do_finish
 elif [ $RET -eq 0 ]; then
 	case "$FUN" in
-		1\ *) do_install_fhem ;; #later version 2.0
-		2\ *) do_install_ebusd ;; #ok
-		3\ *) do_install_ebuscfg ;; #ok
+		1\ *) do_install_fhem ;;
+		2\ *) do_install_ebusd ;;
+		3\ *) do_install_ebuscfg ;;
 		4\ *) do_install_ecmdbasis ;;
 		5\ *) do_install_hcurve ;;
 		6\ *) do_install_valves ;;
 		7\ *) do_install_timer ;;
-		8\ *) do_install_gaebus ;; #ok
+		8\ *) do_install_gaebus ;;
 		9\ *) do_install_ftui ;;
-		x\ *) do_config_installer ;; #later version 2.0
+	   10\ *) do_delete_marker ;;
+		x\ *) do_config_installer ;;
 		*) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
 	esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
 	else
