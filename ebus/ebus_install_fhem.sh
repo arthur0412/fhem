@@ -6,7 +6,7 @@
 #
 # Author's: amunra, reinhart
 
-Version="V0.8.2"
+Version="V0.8.3"
 
 #######################
 #   please change me  #
@@ -29,7 +29,7 @@ ebusdcfgversion="ebusd-configuration-2.0.5aa482c-de_all.deb"
 ebusdcfgurl="https://github.com/john30/ebusd-configuration/releases/download/v2.0.1/$ebusdcfgversion -O "
 
 # GAEBUS Variablen
-gaebusdev="ebus2"
+gaebusdev="ebus1"
 address="localhost:8888"
 interval="900"
 
@@ -535,7 +535,7 @@ if [ $exitstatus = 0 ]; then
 
 	# check if existing bai01.cfg
 	if [ -e "/opt/fhem/FHEM/bai01.cfg" ]; then
-		for Name in  ZeitfensterSchreiben Mo Di Mi Do Fr Sa So
+		for Name in ZeitfensterSchreiben Mo Di Mi Do Fr Sa So
 		do
 			echo search and replace.. $Name
 			echo search and replace.. $Name >>$Log
@@ -647,6 +647,10 @@ do_install_gaebus(){
 			sudo perl $fhemplcmd 'save' >> $Log
 			echo '[ ok ] define new GAEBUS device done'
 			echo $(date +"%m-%d-%Y %T")	'[ ok ]  define new GAEBUS device done' >> $Log
+		else
+			echo '[ failed ] conncetion to FHEM Server failed'
+			echo $(date +"%m-%d-%Y %T")	'[ failed ]  conncetion to FHEM Server failed' >> $Log
+			whiptail --title "conncetion to FHEM Server failed" --msgbox "*********** conncetion to FHEM Server failed!!! ***********\n" 8 78
 		fi
 		
 		# cleaning installpath	
