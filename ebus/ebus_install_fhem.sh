@@ -6,7 +6,7 @@
 #
 # Author's: amunra, reinhart
 
-Version="V0.8.3"
+Version="V0.8.4"
 
 #######################
 #   please change me  #
@@ -34,6 +34,7 @@ address="localhost:8888"
 interval="900"
 
 # FHEM Variablen
+# fhemplcmd='/opt/fhem/fhem.pl 7072 testpw'
 fhemplcmd='/opt/fhem/fhem.pl 7072'
 
 # Download Files
@@ -107,8 +108,9 @@ checkfhemcon() {
 	echo '[ .. ] test connection to FHEM Server'
 	echo $(date +"%m-%d-%Y %T")	'[ .. ] test connection to FHEM Server' >> $Log
 	fhemcon=`sudo perl $fhemplcmd 'list TYPE=Global NAME' | awk '{split($0,a," "); print a[1]}'` >> $Log
-	# result=`echo "$con" | awk '{split($0,a," "); print a[1]}'`
-	echo '[ .. ] test connection to FHEM Server Result:' $fhemcon
+	fhemcon=$(echo $fhemcon | sed -e 's/\r//g') # remove new lines
+	fhemcon=$(echo $fhemcon | sed -e 's/ //g') # remove spaces
+	echo '[ .. ] test connection to FHEM Server Result:' $fhemcon ''
 	echo '[ ok ] test connection to FHEM Server done'
 	echo $(date +"%m-%d-%Y %T")	'[ ok ] test connection to FHEM Server done' >> $Log
 	return
@@ -614,7 +616,7 @@ do_install_gaebus(){
 		echo $(date +"%m-%d-%Y %T")	'[ ok ] set permission 755 done' >> $Log
 
 		checkfhemcon # Check connetion to FHEM Server
-
+		
 		if [ "$fhemcon" = "global" ]; then # connection to FHEM Server is ok.
 			output=`sudo perl $fhemplcmd 'list TYPE=GAEBUS NAME'`
 			echo "$output" | while read a; do result=`echo $a | awk '{split($0,a," "); print a[1];}';` 
@@ -792,7 +794,28 @@ do_install_fhem(){
 } 
 
 do_config_installer(){ 
-whiptail --title "not implemented yet" --msgbox "....comming soon....\n" 8 78
+	whiptail --title "not implemented yet" --msgbox "....comming soon....\n" 8 78
+	# thermostat=$(whiptail --title "eBus installer Settings" --menu "Choose an option" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT \
+	# "set FHEM telnet pw" "set FHEM telnet (password/globalpassword)" \
+	# "Duplicate" "False=change in orignal fhem.cfg, true=make a copy fhem-install.cfg" 3>&1 1>&2 2>&3)
+	# FUN2=$(whiptail --title "eBus installer Settings" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select --defaultno \
+	# "1  FHEM telnet pwd" "set FHEM telnet (password/globalpassword)" \
+	# "2  Duplicate" "false=change fhem.cfg, true=change fhem-install.cfg" \
+	# 3>&1 1>&2 2>&3)
+
+	# RET2=$?
+	# if [ $RET2 -eq 1 ]; then
+		# do_finish
+	# elif [ $RET2 -eq 0 ]; then
+		# case "$FUN2" in
+			# 1\ *) do_setfhempw ;; #later version 2.0
+			# 2\ *) do_install_ebusd ;; #ok
+			# *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+		# esac || whiptail --msgbox "There was an error running option $FUN2" 20 60 1
+		# else
+			# exit 1
+	# fi
+
 }
 #_________________________________________________________       
 # Interactive use loop
