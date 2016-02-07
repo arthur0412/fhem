@@ -792,7 +792,7 @@ do_install_fhem(){
 	update-rc.d fhem defaults
 
 	if test -f /etc/init.d/fhem; then
-		/etc/init.d/fhem start noaptmark
+		sudo /etc/init.d/fhem start noaptmark
 	fi
 	echo '[ ok ] post FHEM installation done'
 	echo $(date +"%m-%d-%Y %T")	'[ ok ] post FHEM installation done' >> $Log
