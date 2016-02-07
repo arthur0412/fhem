@@ -62,6 +62,7 @@ templatescsv=$url"_templates.csv"$urlpostfix
 ebusdlogrotate=$url"ebusd.logrotate"$urlpostfix
 ebusddefault=$url"ebusd.default"$urlpostfix
 customtabletuitar=$url"ftui.tar.gz"$urlpostfix
+defaultfhemcfg=$url"fhem.cfg"$urlpostfix
 fhemsources="http://fhem.de/fhem-5.7.tar.gz -P "
 
 INTERACTIVE=true
@@ -748,6 +749,13 @@ do_install_fhem(){
 		echo $(date +"%m-%d-%Y %T")	'[ ok ] backup existing fhem installation done' >> $Log
 	fi
 	
+	# Install required packages
+	echo '[ .. ] install required packages'
+	echo $(date +"%m-%d-%Y %T")	'[ .. ] install required packages' >> $Log
+	sudo apt-get -y install perl libdevice-serialport-perl libio-socket-ssl-perl libwww-perl libxml-simple-perl libcgi-pm-perl >> $Log 2>&1
+	echo '[ ok ] install required packages'
+	echo $(date +"%m-%d-%Y %T")	'[ ok ] install required packages' >> $Log
+	
 	# download fhem sources
 	downloadfile "$fhemsources" $ebusinstallerdir/
 	echo '[ .. ] extract FHEM sources'
@@ -804,6 +812,12 @@ do_install_fhem(){
 	echo '[ ok ] update fhem sources done'
 	echo $(date +"%m-%d-%Y %T")	'[ ok ] update fhem done' >> $Log
 	
+	# download default fhem.cfg
+	downloadfile "$defaultfhemcfg" /opt/fhem/fhem.cfg
+	
+	sudo service fhem stop >> $Log 2>&1
+	sudo service fhem start >> $Log 2>&1
+	
 	# cleaning installpath  
 	if [ "$cleaning" = "true" ]; then
 		cleanupinstaller
@@ -851,8 +865,8 @@ FUN=$(whiptail --title "eBus Install and Configuration Tool $(hostname) $Version
 "8  GAEBUS" "98_GAEBUS.pm, FHEM Config" \
 "9  Tablet-UI" "Install UI HTML Demo Modul" \
 "10 Markierungen loeschen" "loeschen von doppelten Installationen" \
-"x  Installer configuration" "Setup installer configuration" \
 3>&1 1>&2 2>&3)
+# "x  Installer configuration" "Setup installer configuration" \
 
 RET=$?
 if [ $RET -eq 1 ]; then
