@@ -810,30 +810,30 @@ do_install_fhem(){
 	fi   
 } 
 do_setfhemtelnetpw() {
-ebusdhost=$(whiptail --inputbox "Please enter Hostname/IP-Address and Port of the ebusd Server?" 8 78 $address --title "ebusd Hostname/IP-Address" 3>&1 1>&2 2>&3)
+	ebusdhost=$(whiptail --inputbox "Please enter Hostname/IP-Address and Port of the ebusd Server?" 8 78 $address --title "ebusd Hostname/IP-Address" 3>&1 1>&2 2>&3)
 }
 do_config_installer(){ 
-	# whiptail --title "not implemented yet" --msgbox "....comming soon....\n" 8 78
+	whiptail --title "not implemented yet" --msgbox "....comming soon....\n" 8 78
 	# thermostat=$(whiptail --title "eBus installer Settings" --menu "Choose an option" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT \
 	# "set FHEM telnet pw" "set FHEM telnet (password/globalpassword)" \
 	# "Duplicate" "False=change in orignal fhem.cfg, true=make a copy fhem-install.cfg" 3>&1 1>&2 2>&3)
-	FUN2=$(whiptail --title "eBus installer Settings" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select --defaultno \
-	"1  FHEM telnet pwd" "set FHEM telnet (password/globalpassword)" \
-	"2  Duplicate" "false=change fhem.cfg, true=change fhem-install.cfg" \
-	3>&1 1>&2 2>&3)
+	# FUN2=$(whiptail --title "eBus installer Settings" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select --defaultno \
+	# "1  FHEM telnet pwd" "set FHEM telnet (password/globalpassword)" \
+	# "2  Duplicate" "false=change fhem.cfg, true=change fhem-install.cfg" \
+	# 3>&1 1>&2 2>&3)
 
-	RET2=$?
-	if [ $RET2 -eq 1 ]; then
-		return 0
-	elif [ $RET2 -eq 0 ]; then
-		case "$FUN2" in
-			1\ *) do_setfhemtelnetpw;; 
-			2\ *) do_install_ebusd ;;
-			*) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-		esac || whiptail --msgbox "There was an error running option $FUN2" 20 60 1
-		else
-			return 0
-	fi
+	# RET2=$?
+	# if [ $RET2 -eq 1 ]; then
+		# return 0
+	# elif [ $RET2 -eq 0 ]; then
+		# case "$FUN2" in
+			# 1\ *) do_setfhemtelnetpw;; 
+			# 2\ *) do_install_ebusd ;;
+			# *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+		# esac || whiptail --msgbox "There was an error running option $FUN2" 20 60 1
+		# else
+			# return 0
+	# fi
 
 }
 #_________________________________________________________       
