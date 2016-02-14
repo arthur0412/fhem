@@ -789,6 +789,11 @@ do_install_fhem(){
 	# set up of autostart
 	cp /opt/fhem/contrib/init-scripts/fhem.3 /etc/init.d/fhem
 	chmod ugo+x /etc/init.d/fhem
+	# disable check for fhem installation on startup
+	sudo sed -e 's/if test "$2" != "noaptmark"; then/#if test "$2" != "noaptmark"; then/g' -i /etc/init.d/fhem 
+	sudo sed -e 's/  apt-mark hold fhem > \/dev\/null/#  apt-mark hold fhem > \/dev\/null/g' -i /etc/init.d/fhem 
+	sudo sed -e 's/fi/#fi/g' -i /etc/init.d/fhem 
+	
 	update-rc.d fhem defaults
 
 	if test -f /etc/init.d/fhem; then
