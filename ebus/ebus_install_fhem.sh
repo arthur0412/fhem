@@ -6,7 +6,7 @@
 #
 # Author's: amunra, reinhart
 
-Version="V0.8.5"
+Version="V0.8.6"
 
 #######################
 #   please change me  #
@@ -21,12 +21,12 @@ Log="/var/log/ebusinstaller.log"
 BackupDir="/opt/fhem/backup/"$(date +"%Y%m%d")
 ebusinstallerdir=$HOME"/ebusinstaller"
 # eBusd Variablen
-ebusdversion="ebusd-2.0_armhf.deb"
-ebusdurl="https://github.com/john30/ebusd/releases/download/v2.0/$ebusdversion -O "
-
+ebusdversion="ebusd-2.3_armhf.deb"
+ebusdurl="https://github.com/john30/ebusd/releases/download/v2.3/$ebusdversion -O "
+         
 # eBusd Config Variablen
-ebusdcfgversion="ebusd-configuration-2.0.5aa482c-de_all.deb"
-ebusdcfgurl="https://github.com/john30/ebusd-configuration/releases/download/v2.0.1/$ebusdcfgversion -O "
+ebusdcfgversion="ebusd-configuration-2.1.b143f39-de_all.deb"
+ebusdcfgurl="https://github.com/john30/ebusd-configuration/releases/download/v2.1.1/$ebusdcfgversion -O "
 
 # GAEBUS Variablen
 gaebusdev="ebus1"
