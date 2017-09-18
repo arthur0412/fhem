@@ -1,4 +1,4 @@
-eBus Installer
+eBus Installer [![Spenden](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RBKNLCGZ6CB9Y)
 --------------
 ![](http://up.picr.de/24608250im.png)
 
