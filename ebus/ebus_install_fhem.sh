@@ -4,9 +4,9 @@
 # sudo chmod 775 ebus_install_fhem.sh
 # sudo ./ebus_install_fhem.sh
 #
-# Author's: amunra, reinhart
+# Author's: chons, reinhart
 
-Version="V0.8.6"
+Version="V0.8.7"
 
 #######################
 #   please change me  #
@@ -21,8 +21,8 @@ Log="/var/log/ebusinstaller.log"
 BackupDir="/opt/fhem/backup/"$(date +"%Y%m%d")
 ebusinstallerdir=$HOME"/ebusinstaller"
 # eBusd Variablen
-ebusdversion="ebusd-2.3_armhf.deb"
-ebusdurl="https://github.com/john30/ebusd/releases/download/v2.3/$ebusdversion -O "
+ebusdversion="ebusd-3.0_armhf.deb"
+ebusdurl="https://github.com/john30/ebusd/releases/download/v3.0/$ebusdversion -O "
          
 # eBusd Config Variablen
 ebusdcfgversion="ebusd-configuration-2.1.b143f39-de_all.deb"
