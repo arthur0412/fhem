@@ -39,30 +39,30 @@ fhemplcmd='/opt/fhem/fhem.pl 7072'
 
 # Download Files
 url="http://sourceforge.net/projects/ebus-installer/files/eBusInstaller/"
-urlpostfix="/download -O "
+urlsufix="/download -O "
 
 # Change to amunra0412 github repo
 if [ $repoamunra = "true" ]; then
 	url="https://raw.githubusercontent.com/arthur0412/fhem/master/ebus/installerfiles/"
-	urlpostfix=" -O "
+	urlsufix=" -O "
 fi
 
-hkurvecfg=$url"hkurve.cfg"$urlpostfix
-bai01=$url"bai01.cfg"$urlpostfix
+hkurvecfg=$url"hkurve.cfg"$urlsufix
+bai01=$url"bai01.cfg"$urlsufix
 gaebus="http://sourceforge.net/p/fhem/code/HEAD/tree/trunk/fhem/contrib/98_GAEBUS.pm?format=raw -O "
-ebuscfg=$url"EBUS.cfg"$urlpostfix
-valvescfg=$url"valves.cfg"$urlpostfix
-valvesmodule=$url"39_VALVES.pm"$urlpostfix
-timercfg=$url"timer.cfg"$urlpostfix
-bai02=$url"bai02.cfg"$urlpostfix
-myUtils=$url"99_myUtils.pm"$urlpostfix
-MyUtilsHeader=$url"99_myUtils_Header.pm"$urlpostfix
-broadcastcsv=$url"broadcast.csv"$urlpostfix
-templatescsv=$url"_templates.csv"$urlpostfix
-ebusdlogrotate=$url"ebusd.logrotate"$urlpostfix
-ebusddefault=$url"ebusd.default"$urlpostfix
-customtabletuitar=$url"ftui.tar.gz"$urlpostfix
-defaultfhemcfg=$url"fhem.cfg"$urlpostfix
+ebuscfg=$url"EBUS.cfg"$urlsufix
+valvescfg=$url"valves.cfg"$urlsufix
+valvesmodule=$url"39_VALVES.pm"$urlsufix
+timercfg=$url"timer.cfg"$urlsufix
+bai02=$url"bai02.cfg"$urlsufix
+myUtils=$url"99_myUtils.pm"$urlsufix
+MyUtilsHeader=$url"99_myUtils_Header.pm"$urlsufix
+broadcastcsv=$url"broadcast.csv"$urlsufix
+templatescsv=$url"_templates.csv"$urlsufix
+ebusdlogrotate=$url"ebusd.logrotate"$urlsufix
+ebusddefault=$url"ebusd.default"$urlsufix
+customtabletuitar=$url"ftui.tar.gz"$urlsufix
+defaultfhemcfg=$url"fhem.cfg"$urlsufix
 fhemsources="http://fhem.de/fhem-5.7.tar.gz -P "
 
 INTERACTIVE=true
